@@ -1,0 +1,25 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+set -x
+
+#------------------------------- solarEnergy4Foam project -------------------------------#
+#Author
+    #Ehsan Golab, SUT. All rights reserved.
+    #Ehsan1996Golab@gmail.com
+
+#--------------------------------------------------------------------------------------#
+
+mkdir build_static
+mkdir build_dynamic
+
+cd build_static
+cmake ../CoolProp -DCOOLPROP_STATIC_LIBRARY=ON
+cmake --build .
+cd ..
+
+cd build_dynamic
+cmake ../CoolProp -DCOOLPROP_SHARED_LIBRARY=ON
+cmake --build .
+cd ..
+
+# ----------------------------------------------------------------- end-of-file
