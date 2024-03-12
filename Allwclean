@@ -9,11 +9,8 @@ set -x
 
 #--------------------------------------------------------------------------------------#
 
-# install libs
-cp -r src $WM_PROJECT_USER_DIR/src/SE4Foam
-$WM_PROJECT_USER_DIR/src/SE4Foam/Allwmake
+rm -r `find . -name linux*`
+rm -r `find . -name lnInclude*`
+rm `find . -name *.dep`
 
-# install solvers
-applications/Allwmake
- 
-# ----------------------------------------------------------------- end-of-file
+# -------------------------------------------------------------------------- end-of-file
