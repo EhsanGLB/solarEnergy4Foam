@@ -1,0 +1,2 @@
+cellSet porousRing new cylinderToCell (0.0 -0.5 0.0) (0.0 0.5 0.0) 0.03
+cellSet porousRing invert

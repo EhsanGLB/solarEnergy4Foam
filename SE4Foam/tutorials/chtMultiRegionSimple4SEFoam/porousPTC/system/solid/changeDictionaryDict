@@ -1,0 +1,158 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changePatchTypeDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dictionaryReplacement
+{
+    T
+    {
+        internalField   uniform 400;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            zeroGradient;
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            tubeWall
+            {
+                /*type            fixedValue;
+                value           uniform 500;*/
+
+                type		parabolicCollector4SEFoam;
+                Kappa		Kappa;
+                range		(0 68 114 180);
+                LCR1		(26.65    -0.01496    0.04643    -2.258e-3    4.175e-5    -2.588e-7);
+                LCR2		(-181.1    9.099    -0.1121    4.071e-4    0.0    0.0);
+                LCR3		(9.668    -0.1821    1.125e-3    -2.157e-6    0.0    0.0);
+                glassRadProp	(0.01    0.02    0.97);//(Absorptivity  emissivity transmissivity)
+                tubeRadProp	(0.96    0.04    0.0);//(Absorptivity  emissivity transmissivity)
+                dgi		0.12;
+                dgo		0.125;
+                dti		0.076;
+                dto		0.084;
+                len		1.0;
+                longDir		(0 1 0);
+                radDir		(0 0 -1);
+                qo		(1000);
+                ho		(9.6);
+                To		(300);
+            }
+
+            solid_to_fluid
+            {
+                type            solidWallMixedTemperatureCoupled;
+                neighbourRegionName fluid;
+                neighbourPatchName fluid_to_solid;
+                neighbourFieldName T;
+                Kappa           Kappa;
+                value           uniform 400;
+            }
+        }
+    }
+
+    rho
+    {
+        internalField   uniform 7800;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            zeroGradient;
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            tubeWall
+            {
+                type            zeroGradient;
+            }
+
+            solid_to_fluid
+            {
+                type            zeroGradient;
+            }
+        }
+    }
+
+    Kappa
+    {
+        internalField   uniform 50;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            zeroGradient;
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            tubeWall
+            {
+                type            zeroGradient;
+            }
+
+            solid_to_fluid
+            {
+                type            zeroGradient;
+            }
+        }
+    }
+
+    cp
+    {
+        internalField   uniform 450;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            zeroGradient;
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            tubeWall
+            {
+                type            zeroGradient;
+            }
+
+            solid_to_fluid
+            {
+                type            zeroGradient;
+            }
+        }
+    }
+}
+
+
+// ************************************************************************* //
