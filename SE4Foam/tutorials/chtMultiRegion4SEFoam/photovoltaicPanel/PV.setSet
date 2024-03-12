@@ -1,0 +1,4 @@
+cellSet PV new boxToCell (0.3 0.08 -0.005) (0.7 0.1 0.005)
+cellSet channel clear
+cellSet channel add cellToCell PV
+cellSet channel invert
