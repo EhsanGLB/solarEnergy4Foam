@@ -1,0 +1,21 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+set -x
+
+#------------------------------- solarEnergy4Foam project -------------------------------#
+#Author
+    #Ehsan Golab, SUT. All rights reserved.
+    #Ehsan1996Golab@gmail.com
+
+#--------------------------------------------------------------------------------------#
+
+# download and install the coolProp in WM_PROJECT_USER_DIR of foam#
+#git clone --recursive https://github.com/coolprop/coolprop CoolProp
+cp -r coolProp $WM_PROJECT_USER_DIR/src
+$WM_PROJECT_USER_DIR/src/coolProp/Allwmake
+
+
+# install the SE4Foam in WM_PROJECT_USER_DIR of foam#
+./SE4Foam/Allwmake
+
+# ----------------------------------------------------------------- end-of-file
