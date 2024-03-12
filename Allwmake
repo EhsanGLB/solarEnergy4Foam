@@ -11,6 +11,7 @@ set -x
 
 # download and install the coolProp in WM_PROJECT_USER_DIR of foam#
 git clone --recursive https://github.com/coolprop/coolprop coolProp/CoolProp
+chmod 777 *
 cp -r coolProp $WM_PROJECT_USER_DIR/src
 $WM_PROJECT_USER_DIR/src/coolProp/Allwmake
 
