@@ -1,0 +1,163 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "liblduSolvers.so"
+    "libSE4Foam.so"
+);
+
+application     simple4SEFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10000;
+
+deltaT          0.1;
+
+writeControl    timeStep;
+
+writeInterval   10;
+
+purgeWrite      4;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+/*
+InfoSwitches
+{
+    writePrecision  6;
+    writeJobInfo    0;
+    allowSystemOperations 1;
+}
+
+functions
+(
+    postProcess
+    {
+        functionObjectLibs    ("libutilityFunctionObjects.so");
+        type                  coded;
+        name                  postProcess;
+        enabled               true;
+        outputControl         outputTime;
+        redirectType          postProcess;
+
+        code
+        #{
+            //- constant values for T = 400K
+            scalar d = 0.076;
+            scalar len = 1.0;
+            scalar rho0 = 975.7;
+            scalar kappa0 = 0.1242;
+            scalar I = 1000;
+            scalar LCR = 20.3;
+            scalar Ap = 5.0;
+            scalar Ta = 300;
+            scalar fr0 = 1.0;
+            scalar Nu0 = 1.0;
+
+
+            //- making a output file
+            std::ofstream output;
+            output.open("postProcess.txt",std::ofstream::app);
+
+
+            //- lookup fields
+            const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+            const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+            const volScalarField& Cp = mesh().lookupObject<volScalarField>("Cp");
+            const volScalarField& kappaEff = mesh().lookupObject<volScalarField>("kappaEff");
+            const volScalarField& nu = mesh().lookupObject<volScalarField>("nu");
+            const volScalarField& nut = mesh().lookupObject<volScalarField>("nut");
+            volScalarField mu = rho*(nu+nut);
+            const surfaceScalarField& phi = mesh().lookupObject<surfaceScalarField>("phi");
+            surfaceScalarField gradT = fvc::snGrad(T);
+            surfaceVectorField gradU = fvc::snGrad(U);
+
+
+
+            //- compute pressure difference and friction factor
+            label inletID_ = p.mesh().boundaryMesh().findPatchID("inlet");
+            label outletID_ = p.mesh().boundaryMesh().findPatchID("outlet");
+            label wallID_ = p.mesh().boundaryMesh().findPatchID("tubeWall");
+            scalar V = -1*sum(phi.boundaryField()[inletID_]);
+            scalar v0 = -1*V/sum(p.mesh().magSf().boundaryField()[inletID_]);
+            scalar m = -1*sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]);
+            scalar pi = sum(rho.boundaryField()[inletID_]*p.boundaryField()[inletID_]*p.mesh().magSf().boundaryField()[inletID_])/sum(p.mesh().magSf().boundaryField()[inletID_]);
+            scalar po = sum(rho.boundaryField()[outletID_]*p.boundaryField()[outletID_]*p.mesh().magSf().boundaryField()[outletID_])/sum(p.mesh().magSf().boundaryField()[outletID_]);
+            scalar deltaP = pi - po;
+            scalar fr = (deltaP*d)/(2.0*rho0*len*pow(v0, 2.0));
+
+
+            scalar tau = sum(mu.boundaryField()[wallID_]*mag(gradU.boundaryField()[wallID_])*p.mesh().magSf().boundaryField()[wallID_])/sum(p.mesh().magSf().boundaryField()[wallID_]);
+            scalar fr2 = tau/(0.5*rho0*pow(v0, 2));
+
+
+            scalar Pi = -1*sum(rho.boundaryField()[inletID_]*p.boundaryField()[inletID_]*phi.boundaryField()[inletID_]);
+            scalar Po = sum(rho.boundaryField()[outletID_]*p.boundaryField()[outletID_]*phi.boundaryField()[outletID_]);
+            scalar Pp = Pi - Po;
+
+
+            //- compute h and Nu
+            scalar Qi = -1.0*sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]*T.boundaryField()[inletID_]);
+            scalar Qo = sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]*T.boundaryField()[outletID_]);
+            scalar Ti = sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]*T.boundaryField()[inletID_])/sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]);
+            scalar To = sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]*T.boundaryField()[outletID_])/sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]);
+            scalar Q = Qo - Qi;
+            scalar Tw = sum(T.boundaryField()[wallID_]*p.mesh().magSf().boundaryField()[wallID_])/sum(p.mesh().magSf().boundaryField()[wallID_]);
+            scalar Tb = (Ti+To)/2;
+            scalar h = Q/(3.14*d*len*(Tw-Tb));
+            scalar Nu = (h*d)/kappa0;
+            scalar deltaTa = (Ti+To)/2.0 - Ta;
+
+            scalar Qw = sum(kappaEff.boundaryField()[wallID_]*gradT.boundaryField()[wallID_]*p.mesh().magSf().boundaryField()[wallID_]);
+            scalar h2 = Qw/(3.14*d*len*(Tw-Tb));
+            scalar Nu2 = (h2*d)/kappa0;
+            scalar eta_th = Qw/(Ap*I);
+            scalar PEC = (Nu/Nu0)/pow(fr/fr0, 1/3);
+
+
+
+            Info << "fr(deltaP): " << fr << "\t" << "fr(tau): " << fr2 << endl;
+            Info << "Pp: " << Pp << endl;
+            Info << "m*Cp*deltaT: " << Q << "\t" << "kappa*gradT*A: " << Qw << endl;
+            Info << "Ti: " << Ti << "\t" << "To: " << To << endl;
+            Info << "Tw: " << Tw << "\t" << "Tb: " << Tb << endl;
+            Info << "Nu: " << Nu << endl;
+            Info << "eta_th: " << eta_th << endl;
+            Info << "PEC: " << PEC << endl;
+
+            output << "fr: " << fr << "\t" << "h: " << h << "\t" << "Nu: " << Nu << "\t" << "eta_th: " << eta_th << "\n";
+            output.close();
+        #};
+    }
+);*/
+// ************************************************************************* //

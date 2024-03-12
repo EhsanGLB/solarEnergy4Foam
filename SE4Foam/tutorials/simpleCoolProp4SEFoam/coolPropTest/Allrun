@@ -1,0 +1,28 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+#------------------------------- solarEnergy4Foam project -------------------------------#
+#Author
+    #Ehsan Golab, SUT. All rights reserved.
+    #Ehsan1996Golab@gmail.com
+
+#--------------------------------------------------------------------------------------#
+
+### for static library ###
+g++ -std=c++11 -Wall -O2 -o main -I$WM_PROJECT_USER_DIR/src/coolProp/CoolProp/include -L$WM_PROJECT_USER_DIR/src/coolProp/build_static main.cpp -lCoolProp -ldl
+
+
+### for shared library ###
+#g++ -std=c++11 -Wall -O2 -o main -DCOOLPROP_LIB -I$WM_PROJECT_USER_DIR/src/coolProp/CoolProp/include main.cpp $WM_PROJECT_USER_DIR/src/coolProp/build_dynamic/libCoolProp.so -ldl
+#LD_LIBRARY_PATH=$WM_PROJECT_USER_DIR/src/coolProp/build_dynamic
+
+
+./main
+
+# ----------------------------------------------------------------- end-of-file
+
+
+
+
+
+
