@@ -1,0 +1,30 @@
+
+thermophysicalFunctionsDir = thermophysicalModels/thermophysicalFunctions
+$(thermophysicalFunctionsDir)/functions/expPolyfunc/expPolyfunc.C
+
+
+materialsDir = thermophysicalModels/materials
+$(materialsDir)/material/material.C
+$(materialsDir)/constProp/constProp.C
+$(materialsDir)/funcTProp/funcTProp.C
+
+
+fluidDir = thermophysicalModels/fluid
+$(fluidDir)/fluid.C
+
+
+transportModels/incompressible/viscosityModels/SE4Foam/SE4Foam.C
+
+
+finiteVolumeDir = finiteVolume
+fieldsDir = $(finiteVolumeDir)/fields
+fvPatchFieldsDir = $(fieldsDir)/fvPatchFields
+derivedDir = $(fvPatchFieldsDir)/derived
+$(derivedDir)/parabolicRadialVelocity4SEFoam/parabolicRadialVelocity4SEFoam.C
+$(derivedDir)/powerLawRadialVelocity4SEFoam/powerLawRadialVelocity4SEFoam.C
+$(derivedDir)/robin4SEFoam/robin4SEFoam.C
+$(derivedDir)/parabolicCollector4SEFoam/parabolicCollector4SEFoam.C
+$(derivedDir)/photovoltaic4SEFoam/photovoltaic4SEFoam.C
+
+
+LIB = $(FOAM_USER_LIBBIN)/libSE4Foam
