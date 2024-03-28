@@ -1,0 +1,19 @@
+{
+    volScalarField T_ = T;
+    //kappaEff.correctBoundaryConditions();
+
+    fvScalarMatrix TEqn
+    (
+        fvm::div((phi*fvc::interpolate(rho*Cp)), T)
+      - fvm::laplacian(kappaEff, T)
+      ==
+        radiation->Ru()
+      - fvm::Sp(4.0*radiation->Rp()*pow(T_,3), T)
+      - radiation->Rp()*pow(T_,3)*(T_ - 4.0*T)
+    );
+
+    TEqn.relax();
+    TEqn.solve();
+
+    radiation->correct();
+}

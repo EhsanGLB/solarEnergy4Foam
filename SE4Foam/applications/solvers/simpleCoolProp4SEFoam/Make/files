@@ -1,0 +1,3 @@
+simpleCoolProp4SEFoam.C
+
+EXE = $(FOAM_USER_APPBIN)/simpleCoolProp4SEFoam
