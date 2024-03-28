@@ -1,0 +1,19 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+set -x
+
+#------------------------------- solarEnergy4Foam project -------------------------------#
+#Author
+    #Ehsan Golab, SUT. All rights reserved.
+    #Ehsan1996Golab@gmail.com
+
+#--------------------------------------------------------------------------------------#
+
+# install libs
+cp -r src $WM_PROJECT_USER_DIR/src/SE4Foam
+$WM_PROJECT_USER_DIR/src/SE4Foam/Allwmake
+
+# install solvers
+applications/Allwmake
+ 
+# ----------------------------------------------------------------- end-of-file
