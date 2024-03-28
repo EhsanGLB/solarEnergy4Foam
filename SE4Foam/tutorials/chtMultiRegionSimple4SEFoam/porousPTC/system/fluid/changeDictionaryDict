@@ -1,0 +1,210 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changePatchTypeDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dictionaryReplacement
+{
+    U
+    {
+        internalField   uniform (0 0 0);
+        boundaryField
+        {
+            inlet
+            {
+                /*type            fixedValue;
+                value           uniform (0 0 0);*/
+                type            powerLawRadialVelocity4SEFoam;
+                Vm              (0.0935);//Re=10000 for T=400K
+                R               0.038;
+                m               6;
+                longDir         (0 1 0);
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            fluid_to_solid
+            {
+                type            fixedValue;
+                value           uniform (0 0 0);
+            }
+        }
+    }
+
+    T
+    {
+        internalField   uniform 400;
+        boundaryField
+        {
+            inlet
+            {
+                type            fixedValue;
+                value           uniform 400;
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            fluid_to_solid
+            {
+                type            solidWallMixedTemperatureCoupled;
+                neighbourRegionName solid;
+                neighbourPatchName solid_to_fluid;
+                neighbourFieldName T;
+                Kappa           kappaEff;
+                value           uniform 400;
+            }
+        }
+    }
+
+    p
+    {
+        internalField   uniform 0;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            zeroGradient;
+            }
+
+            outlet
+            {
+                type            fixedValue;
+                value           uniform 0;
+            }
+
+            fluid_to_solid
+            {
+                type            zeroGradient;
+            }
+        }
+    }
+
+    k
+    {
+        internalField   uniform 5.63e-4;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            fixedValue;
+                value           uniform 5.63e-4;//k = 1.5*(U*I)^2, I=0.05 or 0.16*Re^(-1/8)
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            fluid_to_solid
+            {
+                type            kqRWallFunction;
+                value           uniform 5.63e-4;
+            }
+        }
+    }
+
+    epsilon
+    {
+        internalField   uniform 4.16e-4;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            fixedValue;
+                value           uniform 4.16e-4;//e = Cmu*k^(1.5)/l, l=0.038*d
+            }
+
+            outlet
+            {
+                type            zeroGradient;
+            }
+
+            fluid_to_solid
+            {
+                type            epsilonWallFunction;
+                refValue        uniform 0;
+                value           uniform 4.16e-4;//e = Cmu*k^(1.5)/l, l=0.038*d
+                Cmu             0.09;
+                kappa           0.41;
+                E               9.8;
+            }
+        }
+    }
+
+    nut
+    {
+        internalField   uniform 0.0;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            calculated;
+                value           uniform 0;
+            }
+
+            outlet
+            {
+                type            calculated;
+                value           uniform 0;
+            }
+
+            fluid_to_solid
+            {
+                type            nutkWallFunction;
+                Cmu             0.09;
+                kappa           0.41;
+                E               9.8;
+                value           uniform 0;
+            }
+        }
+    }
+
+    kappat
+    {
+        internalField   uniform 0.0;
+
+        boundaryField
+        {
+            inlet
+            {
+                type            calculated;
+            }
+
+            outlet
+            {
+                type            calculated;
+            }
+
+            fluid_to_solid
+            {
+                type            kappatJayatillekeWallFunction;
+                value           uniform 0;
+            }
+        }
+    }
+
+}
+
+
+// ************************************************************************* //
