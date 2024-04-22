@@ -1,0 +1,102 @@
+    type            hPsiThermo;
+    mixture         pureMixture;
+    transport       const;
+    thermo          hConst;
+    equationOfState perfectGas;
+    specie          specie;
+
+
+
+thermoType      hRhoThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>;
+
+mixture         air	1	28.9		1000	0	1.8e-05 0.7;
+                air	nMoles	molWeight	Cp	Hf	mu	Pr;
+
+Hf = heat of fusion
+
+
+
+getData from iostream
+specie(air	nMoles	molWeight)-equationOfState()-thermo(Cp	Hf)-transport(mu	Pr)
+
+
+
+
+basicRhoThermo
+8
+(
+hRhoThermo<pureMixture<constTransport<specieThermo<hConstThermo<Boussinesq>>>>>
+hRhoThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hRhoThermo<pureMixture<icoPoly8ThermoPhysics>>
+hRhoThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hRhoThermo<pureMixture<sutherlandTransport<specieThermo<janafThermo<perfectGas>>>>>
+hsRhoThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hsRhoThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hsRhoThermo<pureMixture<sutherlandTransport<specieThermo<janafThermo<perfectGas>>>>>
+)
+
+
+a<b<c<d<e<f>>>>>
+a --> hRhoThermo, hsRhoThermo
+b --> pureMixture
+c(transport Pr, mu, kappa) --> const, polynominal, speciesTransport, sutherland
+d(specie or h,Cp,Cv) --> eConst, hConst, hPolynominal, janaf, realGasThermo, specieThermo
+e() --> 
+f(equationOfState) --> cubicEquationOfState, icoPolynomial, perfectGas
+
+
+/*******************************************************************/
+basicPsiThermo
+
+45
+(
+IAPWSThermo
+ePsiThermo<pureMixture<constTransport<specieThermo<eConstThermo<perfectGas>>>>>
+ePsiThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>
+ePsiThermo<pureMixture<sutherlandTransport<specieThermo<eConstThermo<perfectGas>>>>>
+ePsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>
+ePsiThermo<pureMixture<sutherlandTransport<specieThermo<janafThermo<perfectGas>>>>>
+hPsiThermo<pureMixture<constTransport<specieThermo<hConstThermo<Boussinesq>>>>>
+hPsiThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hPsiThermo<pureMixture<sutherlandTransport<specieThermo<janafThermo<perfectGas>>>>>
+hsPsiThermo<pureMixture<constTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hsPsiThermo<pureMixture<sutherlandTransport<specieThermo<hConstThermo<perfectGas>>>>>
+hsPsiThermo<pureMixture<sutherlandTransport<specieThermo<janafThermo<perfectGas>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<aungierRedlichKwong>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<pengRobinson>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<redlichKwong>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<soaveRedlichKwong>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<aungierRedlichKwong>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<pengRobinson>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<redlichKwong>>>>>
+realGasEThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<soaveRedlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<aungierRedlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<pengRobinson>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<redlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<soaveRedlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<aungierRedlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<pengRobinson>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<redlichKwong>>>>>
+realGasEThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<soaveRedlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<aungierRedlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<pengRobinson>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<redlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<constantHeatCapacity<soaveRedlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<aungierRedlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<pengRobinson>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<redlichKwong>>>>>
+realGasHThermo<pureMixture<constTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<soaveRedlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<aungierRedlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<pengRobinson>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<redlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<constantHeatCapacity<soaveRedlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<aungierRedlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<pengRobinson>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<redlichKwong>>>>>
+realGasHThermo<pureMixture<sutherlandTransport<realGasSpecieThermo<nasaHeatCapacityPolynomial<soaveRedlichKwong>>>>>
+)
+
+
+a<b<c<d<e<f>>>>>
+a --> ePsiThermo, hPsiThermo, hsPsiThermo, realGasEThermo, realGasHThermo

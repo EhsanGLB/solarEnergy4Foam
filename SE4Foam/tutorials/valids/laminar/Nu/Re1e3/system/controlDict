@@ -1,0 +1,263 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "liblduSolvers.so"
+    "libSE4Foam.so"
+);
+
+application     simple4SEFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         10000;
+
+deltaT          0.1;
+
+writeControl    timeStep;
+
+writeInterval   10;
+
+purgeWrite      4;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+InfoSwitches
+{
+    writePrecision  6;
+    writeJobInfo    0;
+    allowSystemOperations 1;
+}
+
+functions
+(
+    postProcess
+    {
+        functionObjectLibs    ("libutilityFunctionObjects.so");
+        type                  coded;
+        name                  postProcess;
+        enabled               true;
+        outputControl         outputTime;
+        redirectType          postProcess;
+
+        code
+        #{
+            //- constant values
+            vector lenDir(0, 1, 0);
+            scalar d = 0.1;
+            scalar len = 1.0;
+            scalar rhoRef = 996.5;
+            scalar kappaRef = 0.6105;
+            scalar CpRef = 4181.0;
+            scalar muRef = 8.5e-4;
+            scalar nuRef = muRef/rhoRef;
+            scalar alphaRef = kappaRef/(rhoRef*CpRef);
+            scalar PrRef = nuRef/alphaRef;
+
+
+            //- making a output file
+            std::ofstream output;
+            output.open("postProcess.txt",std::ofstream::app);
+
+
+            //- lookup fields
+            const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+            const volScalarField& Cp = mesh().lookupObject<volScalarField>("Cp");
+            const volScalarField& kappaEff = mesh().lookupObject<volScalarField>("kappaEff");
+            const surfaceScalarField& phi = mesh().lookupObject<surfaceScalarField>("phi");
+            surfaceScalarField gradT = fvc::snGrad(T);
+
+
+            //- compute friction factor with pressure difference
+            label inletID_ = p.mesh().boundaryMesh().findPatchID("inlet");
+            label outletID_ = p.mesh().boundaryMesh().findPatchID("outlet");
+            label wallID_ = p.mesh().boundaryMesh().findPatchID("tubeWall");
+            scalar URef = -1*sum(phi.boundaryField()[inletID_])/sum(p.mesh().magSf().boundaryField()[inletID_]);
+
+
+
+            //- compute wall heat
+            scalar Qw = sum(kappaEff.boundaryField()[wallID_]*gradT.boundaryField()[wallID_]*p.mesh().magSf().boundaryField()[wallID_]);
+
+
+            //- compute h and Nu with input and output energy
+            scalar Qi = -1.0*sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]*T.boundaryField()[inletID_]);
+            scalar Qo = sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]*T.boundaryField()[outletID_]);
+            scalar Q = Qo - Qi;
+            scalar Ti = sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]*T.boundaryField()[inletID_])/sum(rho.boundaryField()[inletID_]*phi.boundaryField()[inletID_]*Cp.boundaryField()[inletID_]);
+            scalar To = sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]*T.boundaryField()[outletID_])/sum(rho.boundaryField()[outletID_]*phi.boundaryField()[outletID_]*Cp.boundaryField()[outletID_]);
+            scalar Tw = sum(T.boundaryField()[wallID_]*p.mesh().magSf().boundaryField()[wallID_])/sum(p.mesh().magSf().boundaryField()[wallID_]);
+            scalar Tb = (Ti+To)/2;
+            scalar h = Q/(3.14*d*len*(Tw-Tb));
+            scalar Nu = (h*d)/kappaRef;
+
+
+
+            //- compute Nu with correlation
+            scalar Re = (URef*d)/nuRef;
+            scalar Nu_seider = 1.86*pow(Re*PrRef*(d/len), 0.333);
+
+
+            //- Print data
+            Info << "Re: " << Re << endl;
+            Info << "m*Cp*deltaT: " << Q << "\t" << "kappa*gradT*A: " << Qw << endl;
+            Info << "Ti: " << Ti << "\t" << "To: " << To << endl;
+            Info << "Tw: " << Tw << "\t" << "Tb: " << Tb << endl;
+            Info << "Nu_seider: " << Nu_seider << endl;
+            Info << "Nu: " << Nu << endl;
+
+
+
+            output << "Re: " << Re << "\n";
+            output << "m*Cp*deltaT: " << Q << "\t" << "kappa*gradT*A: " << Qw << "\n";
+            output << "Ti: " << Ti << "\t" << "To: " << To << "\n";
+            output << "Tw: " << Tw << "\t" << "Tb: " << Tb << "\n";
+            output << "Nu_seider: " << Nu_seider << endl;
+            output << "Nu: " << Nu << "\n";
+            output.close();
+        #};
+    }
+
+
+    localPostProcess
+    {
+        functionObjectLibs    ("libutilityFunctionObjects.so");
+        type                  coded;
+        name                  localPostProcess;
+        enabled               true;
+        outputControl         outputTime;
+        redirectType          localPostProcess;
+
+        code
+        #{
+            //- constant values
+            int nZones = 10;
+            vector lenDir(0, 1, 0);
+            scalar d = 0.1;
+            scalar kappaRef = 0.6105;
+
+
+            //- making a output file
+            std::ofstream output;
+            output.open("localPostProcess.txt",std::ofstream::app);
+
+
+            //- lookup fields
+            const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+            const volScalarField& Cp = mesh().lookupObject<volScalarField>("Cp");
+            const volScalarField& kappaEff = mesh().lookupObject<volScalarField>("kappaEff");
+            surfaceScalarField gradT = fvc::snGrad(T);
+
+
+            //- define variables
+            label wallID_ = p.mesh().boundaryMesh().findPatchID("tubeWall");
+            volScalarField c = p.mesh().C() & lenDir;
+            scalar lenMin = min(c.internalField());
+            scalar lenMax = max(c.internalField());
+            scalar deltaL = (lenMax-lenMin)/nZones;
+            scalarList Tb(nZones);
+            scalarList Tw(nZones);
+            scalarList qw(nZones);
+            scalarList h(nZones);
+            scalarList Nu(nZones);
+            scalar fluxAvg = 0.0;
+            scalar hAvg = 0.0;
+            scalar NuAvg = 0.0;
+
+
+            for(int n=0; n<nZones; n++)
+            {
+                scalar lMin = lenMin + deltaL*n;
+                scalar lMax = lMin + deltaL;
+                scalar rhoCpTV = 0.0;
+                scalar rhoCpV = 0.0;
+
+                //- compute bulk temperature in each section
+                forAll(c, cell)
+                {
+                    if(lMin < c[cell] && c[cell] < lMax)
+                    {
+                        rhoCpTV += rho[cell]*Cp[cell]*T[cell]*p.mesh().V()[cell];
+                        rhoCpV += rho[cell]*Cp[cell]*p.mesh().V()[cell];
+                    }
+                }
+                Tb[n] = rhoCpTV/rhoCpV;
+
+
+                scalar TA = 0.0;
+                scalar A = 0.0;
+                scalar kappaGradTA = 0.0;
+
+                //- compute average of wall temperature, heat flux, convective heat transfer, Nusselt number in each section
+                forAll(p.mesh().Cf().boundaryField()[wallID_], patch)
+                {
+                    scalar pLoc = p.mesh().Cf().boundaryField()[wallID_][patch] & lenDir;
+
+                    if(lMin < pLoc && pLoc < lMax)
+                    {
+                        TA += T.boundaryField()[wallID_][patch]*p.mesh().magSf().boundaryField()[wallID_][patch];
+                        A += p.mesh().magSf().boundaryField()[wallID_][patch];
+                        kappaGradTA += kappaEff.boundaryField()[wallID_][patch]*gradT.boundaryField()[wallID_][patch]*p.mesh().magSf().boundaryField()[wallID_][patch];
+                    }
+                }
+                Tw[n] = TA/A;
+                qw[n] = kappaGradTA/A;
+                h[n] = qw[n]/max(Tw[n]-Tb[n], 1e-5);
+                Nu[n] = (h[n]*d)/kappaRef;
+                fluxAvg += qw[n];
+                hAvg += h[n];
+            }
+            fluxAvg /= nZones;
+            hAvg /= nZones;
+            NuAvg = (hAvg*d)/kappaRef;
+
+
+            //- print data
+            Info << "Tb: " << Tb << endl;
+            Info << "Tw: " << Tw << endl;
+            Info << "qw: " << qw << endl;
+            Info << "h: " << h << endl;
+            Info << "Nu: " << Nu << endl;
+            Info << "fluxAvg: " << fluxAvg << endl;
+            Info << "hAvg: " << hAvg << endl;
+            Info << "NuAvg: " << NuAvg << endl;
+
+
+            output << "NuAvg: " << NuAvg << "\n";
+            output.close();
+        #};
+    }
+);
+// ************************************************************************* //
