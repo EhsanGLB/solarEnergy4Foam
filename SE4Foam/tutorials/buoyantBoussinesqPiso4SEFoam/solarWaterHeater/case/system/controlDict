@@ -1,0 +1,103 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "liblduSolvers.so"
+    "libSE4Foam.so"
+)
+
+application     buoyantBoussinesqPiso4SEFoam;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         3600;
+
+deltaT          0.1;
+
+writeControl    adjustableRunTime;
+
+writeInterval   60;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+adjustTimeStep  yes;
+
+maxCo           10;
+
+InfoSwitches
+{
+    writePrecision  6;
+    writeJobInfo    0;
+    allowSystemOperations 1;
+}
+
+functions
+(
+    postProcess
+    {
+        functionObjectLibs    ("libutilityFunctionObjects.so");
+        type                  coded;
+        name                  postProcess;
+        enabled               true;
+        outputControl         outputTime;
+        redirectType          postProcess;
+
+        code
+        #{
+            //- making a output file
+            std::ofstream output;
+            output.open("postProcess.txt",std::ofstream::app);
+
+
+            //- lookup fields
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+
+            scalar t_ = T.mesh().time().value();
+            scalar deltaT_ = T.mesh().time().deltaT().value();
+
+            //- compute average temperature
+            const fvMesh& mesh = T.mesh();
+            const scalarField& V = mesh.V();
+            scalar Tavg = (fvc::domainIntegrate(T).value()/sum(V));
+
+
+            //- Print data
+            Info << "Tavg: " << Tavg << endl;
+
+            output << "Time: " << t_ << "\t" << "Tavg: " << Tavg << "\n";
+            output.close();
+        #};
+    }
+);
+// ************************************************************************* //

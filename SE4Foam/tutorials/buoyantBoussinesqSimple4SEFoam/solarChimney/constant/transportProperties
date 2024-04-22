@@ -1,0 +1,27 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transportModel  SE4Foam;
+
+beta            beta [0 0 0 -1 0 0 0]		3e-03;
+TRef            TRef [0 0 0 1 0 0 0]		300;
+Pr		Pr [ 0 0 0 0 0 0 0 ]		0.72;
+Prt		Prt [ 0 0 0 0 0 0 0 ]		0.85;
+
+fluidConstProp    constProp    coeffs    28.9    1.16    0.026    1007.0    1.86e-5; //T = 300K nu = 1.6e-5
+
+
+// ************************************************************************* //
