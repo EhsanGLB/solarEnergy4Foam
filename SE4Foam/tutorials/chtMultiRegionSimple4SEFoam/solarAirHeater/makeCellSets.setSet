@@ -1,0 +1,10 @@
+cellSet metalSheet new boxToCell (0.1 0.05 -0.005) (0.3 0.052 0.005)
+cellSet fin1 new boxToCell (0.148 0.03 -0.005) (0.152 0.05 0.005)
+cellSet fin2 new boxToCell (0.198 0.03 -0.005) (0.202 0.05 0.005)
+cellSet fin3 new boxToCell (0.248 0.03 -0.005) (0.252 0.05 0.005)
+cellSet channel clear
+cellSet channel add cellToCell metalSheet
+cellSet channel add cellToCell fin1
+cellSet channel add cellToCell fin2
+cellSet channel add cellToCell fin3
+cellSet channel invert
