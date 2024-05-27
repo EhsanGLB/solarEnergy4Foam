@@ -77,7 +77,7 @@ Embrace the future of solar energy with SolarEnergy4Foam, your partner in sustai
 
 
 
-### How can I cite the current miniFoam and find more information? ###
+### How can I cite the current miniFoam and find more information?
 
 You can see the governing equations and boundary conditions for each case in tutorial and more case in following resources:
 
