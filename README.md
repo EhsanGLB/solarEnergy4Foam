@@ -14,7 +14,7 @@
 
 #--------------------------------------description------------------------------------------------#
 
-PCM4Foam is a minifoam designed for OpenFOAM for PCM solid-liquid transition problems.
+SE4Foam is a minifoam designed for OpenFOAM for solar energy problems.
 
 
 
