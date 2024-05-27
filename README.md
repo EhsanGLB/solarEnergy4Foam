@@ -8,14 +8,14 @@
  |_____/|______|  |_| |_|  \___/ \__,_|_| |_| |_|
                                                  
 #------------------------------------------------------------------------------------------------#
-[                                    Authors                                                     ]
+##Authors
 [                 Ehsan Golab, Sharif University of Technology.                                  ]
 [                           Ehsan1996Golab@gmail.com                                             ]                
 
 [                 Nima Shirani, Islamic Azad University.                                         ]
 [                           nima.shirani@gmail.com                                               ] 
 
-#--------------------------------------description------------------------------------------------#
+##description
 
 The SE4Foam toolbox is a comprehensive simulation suite built upon the robust [**FoamExtend 4.1**] framework. It is designed to address the complex and diverse needs of solar energy research and engineering. SE4Foam extends the capabilities of conventional simulation tools, allowing for the detailed modeling and analysis of a broad spectrum of solar energy systems, including but not limited to:
 
