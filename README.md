@@ -32,6 +32,8 @@ Once a version of OpenFOAM has been installed, download PCM4Foam and then run th
 
 You can see the governing equations and boundary conditions for each case in tutorial and more case in following resources:
 
-[1] Golab, E., Vahedi, B., Jain, A., Taylor, R.A. and Vafai, K., 2023. Laminar forced convection in a tube with a nano-encapsulated phase change materials: Minimizing exergy losses and maximizing the heat transfer rate. Journal of Energy Storage, 65, p.107233.
+[1] Vahedi, B., Golab, E., Sadr, A.N. and Vafai, K., 2022. Thermal, thermodynamic and exergoeconomic investigation of a parabolic trough collector utilizing nanofluids. Applied Thermal Engineering, 206, p.118117.
+
+[2] Golab, E., Vahedi, B., Jain, A., Taylor, R.A. and Vafai, K., 2023. Laminar forced convection in a tube with a nano-encapsulated phase change materials: Minimizing exergy losses and maximizing the heat transfer rate. Journal of Energy Storage, 65, p.107233.
 
 
