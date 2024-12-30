@@ -60,8 +60,9 @@ With these attributes, SolarEnergy4Foam positions itself as an all-encompassing,
 To utilize the SolarEnergy4Foam toolbox, follow these steps:
 
 1. Install [**FoamExtend 4.1**].
-2. Clone the [**SE4Foam**] repository from GitHub.
-3. Navigate to the SE4Foam directory and execute the `Allwmake` script to compile the toolbox.
+2. Install the [**coolProp**] repository.
+3. Clone the [**SE4Foam**] repository from GitHub.
+4. Navigate to the SE4Foam directory and execute the `Allwmake` script to compile the toolbox.
 
 ## Contribution
 We welcome contributions from the community. If you're interested in improving SE4Foam or have suggestions, please reach out to the authors or submit a pull request.
