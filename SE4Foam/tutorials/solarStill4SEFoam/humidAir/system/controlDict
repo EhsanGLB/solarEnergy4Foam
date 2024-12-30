@@ -1,0 +1,120 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs
+(
+    "liblduSolvers.so"
+    "libSE4Foam.so"
+)
+
+application     solarStill4SEFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          0.001;
+
+writeControl    timeStep;
+
+writeInterval   1000;
+
+purgeWrite      3;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+InfoSwitches
+{
+    writePrecision  6;
+    writeJobInfo    0;
+    allowSystemOperations 1;
+}
+
+functions
+{
+    postProcess
+    {
+        functionObjectLibs	("libutilityFunctionObjects.so");
+        type			coded;
+        enabled			true;
+        outputControl		outputTime;//timeStep;
+        redirectType		postProcess;
+
+        code
+        #{
+            std::ofstream output;
+            output.open("postProcess.txt",std::ofstream::app);
+
+            //- constants
+            scalar rhobf = 1.106;
+            scalar mubf = 1.88e-5;
+            scalar kappabf = 0.025;
+            scalar Cpbf = 1038;
+            scalar betabf = 3.25e-3;
+            scalar nubf = mubf/rhobf;
+            scalar alphabf = kappabf/(rhobf*Cpbf);
+            scalar deltaTemp = 15.0;
+            scalar charL = 0.131;
+            scalar g = 9.81;
+            scalar DV = 2.67518e-05;
+
+            scalar Prbf = nubf/alphabf;
+            scalar Grbf = (g*betabf*deltaTemp*pow(charL,3)) / (pow(nubf,2));
+            scalar Rabf = (g*betabf*deltaTemp*pow(charL,3)) / (nubf*alphabf);
+
+
+            //- lookup fields
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            const volScalarField& alphaV = mesh().lookupObject<volScalarField>("alphaV");
+            const volScalarField& kappaEff = mesh().lookupObject<volScalarField>("kappaEff");
+            surfaceScalarField gradT = fvc::snGrad(T);
+            surfaceScalarField gradAlphaV = fvc::snGrad(alphaV);
+
+            //- find id and compute Nusselt number
+            label bottomID = T.mesh().boundaryMesh().findPatchID("bottom");
+            scalar bottomArea = sum(T.mesh().magSf().boundaryField()[bottomID]);
+            scalar bottomHeatFluxAvg = sum(kappaEff.boundaryField()[bottomID]*gradT.boundaryField()[bottomID]*T.mesh().magSf().boundaryField()[bottomID])/bottomArea;
+            scalar bottomhAvg = bottomHeatFluxAvg/deltaTemp;
+            scalar NusseltAvg = (bottomhAvg*charL)/(kappabf);
+
+            scalar bottomMassFluxAvg = sum(DV*gradAlphaV.boundaryField()[bottomID]*alphaV.mesh().magSf().boundaryField()[bottomID])/bottomArea;
+            scalar bottomMassAvg = bottomMassFluxAvg;
+
+            //- save data
+            output << "Rabf: " << Rabf << "\n";
+            output << "Nu: " << NusseltAvg << "\n";
+            output << "m: " << bottomMassAvg << "\n";
+            output.close();
+        #};
+    }
+
+}
+// ************************************************************************* //
