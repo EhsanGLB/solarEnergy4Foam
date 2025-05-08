@@ -1,7 +1,7 @@
 #!/bin/sh
 cd ${0%/*} || exit 1    # run from this directory
 
-#------------------------------- solarEnergy4Foam project -------------------------------#
+#------------------------------- nanoFluid4Foam project -------------------------------#
 #Author
     #Ehsan Golab, SUT. All rights reserved.
     #Ehsan1996Golab@gmail.com
@@ -30,7 +30,11 @@ blockMesh
 
 echo run solver ...
 #$application
-simple4SEFoam
+#simple4SEFoam
+simple4SEFoam > log
+gnuplot Residuals -
+#pyFoamPlotWatcher.py log
+#pyFoamPlotRunner.py simple4SEFoam
 
 # ----------------------------------------------------------------- end-of-file
 

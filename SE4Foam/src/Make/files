@@ -25,6 +25,9 @@ $(derivedDir)/powerLawRadialVelocity4SEFoam/powerLawRadialVelocity4SEFoam.C
 $(derivedDir)/robin4SEFoam/robin4SEFoam.C
 $(derivedDir)/parabolicCollector4SEFoam/parabolicCollector4SEFoam.C
 $(derivedDir)/photovoltaic4SEFoam/photovoltaic4SEFoam.C
+$(derivedDir)/timeVaryingRobin4SEFoam/timeVaryingRobin4SEFoam.C
+$(derivedDir)/mixedRobin4SEFoam/mixedRobin4SEFoam.C
+$(derivedDir)/timeVaryingMixedRobin4SEFoam/timeVaryingMixedRobin4SEFoam.C
 
 
 turbulenceModelsDir = turbulenceModels
@@ -32,5 +35,9 @@ incompressibleDir = $(turbulenceModelsDir)/incompressible
 kappatWallFunctionsDir = $(incompressibleDir)/RAS/derivedFvPatchFields/wallFunctions/kappatWallFunctions
 $(kappatWallFunctionsDir)/kappatWallFunction4SEFoam/kappatWallFunction4SEFoamFvPatchScalarField.C
 $(kappatWallFunctionsDir)/kappatJayatillekeWallFunction4SEFoam/kappatJayatillekeWallFunction4SEFoamFvPatchScalarField.C
+
+
+$(finiteVolumeDir)/finiteVolume/convectionSchemes/boundedConvectionScheme/boundedConvectionSchemes.C
+
 
 LIB = $(FOAM_USER_LIBBIN)/libSE4Foam

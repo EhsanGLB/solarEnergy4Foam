@@ -18,11 +18,16 @@
     kappa = fluidProp.kappa();
     Cp = fluidProp.Cp();
     mu = fluidProp.mu();
+    rho.correctBoundaryConditions();
+    Cp.correctBoundaryConditions();
+    kappa.correctBoundaryConditions();
+    mu.correctBoundaryConditions();
 
     if(type == "naturalConvection")
     {
         dimensionedScalar& betaf = betafFluid[i];
         beta = betaf;
+        beta.correctBoundaryConditions();
     }
 
     mesh.schemesDict().setFluxRequired(p.name());
@@ -41,6 +46,7 @@
     volScalarField& rhoPM = rhoPMFluid[i];
     volScalarField& CpPM = CpPMFluid[i];
     volScalarField& kappaPM = kappaPMFluid[i];
+    volScalarField& hsPM = hsPMFluid[i];
 
 
     volScalarField& rhoEff = rhoEffFluid[i];
@@ -49,6 +55,9 @@
     rhoEff = porosity*rho + (1-porosity)*rhoPM;
     CpEff = (porosity*rho*Cp + (1-porosity)*rhoPM*CpPM)/rhoEff;
     kappaEff = porosity*(kappat + kappa) + (1-porosity)*kappaPM;
+    rhoEff.correctBoundaryConditions();
+    CpEff.correctBoundaryConditions();
+    kappaEff.correctBoundaryConditions();
 
 
     radiation::radiationModel& rad = radiation[i];

@@ -384,6 +384,7 @@
     PtrList<volScalarField> rhoPMFluid(fluidRegions.size());
     PtrList<volScalarField> CpPMFluid(fluidRegions.size());
     PtrList<volScalarField> kappaPMFluid(fluidRegions.size());
+    PtrList<volScalarField> hsPMFluid(fluidRegions.size());
 
     forAll(fluidRegions, i)
     {
@@ -477,6 +478,26 @@
             )
         );
 
+        Info<< "    Adding to hsPM\n" << endl;
+        hsPMFluid.set
+        (
+            i,
+            new volScalarField
+            (
+                IOobject
+                (
+                    "hsPM",
+                    runTime.timeName(),
+                    fluidRegions[i],
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                fluidRegions[i],
+                dimensionedScalar("hsPM", dimensionSet(1, -1, -3, 0, 0, 0, 0), SMALL),
+                "zeroGradient"
+            )
+        );
+
         forAll( pZonesFluid[i], zoneI )
         {
             const label & zoneId( pZonesFluid[i][zoneI].zoneId() );
@@ -487,6 +508,7 @@
             dimensionedScalar zoneRho(thermalPropertiesPM.lookup("rho"));
             dimensionedScalar zoneCp(thermalPropertiesPM.lookup("Cp"));
             dimensionedScalar zoneKappa(thermalPropertiesPM.lookup("kappa"));
+            dimensionedScalar zoneHs(thermalPropertiesPM.lookup("hs"));
 
             forAll( cells, cellI )
             {
@@ -494,8 +516,14 @@
                 rhoPMFluid[i][cells[cellI]] = zoneRho.value();
                 CpPMFluid[i][cells[cellI]] = zoneCp.value();
                 kappaPMFluid[i][cells[cellI]] = zoneKappa.value();
+                hsPMFluid[cells[cellI]] = zoneHs.value();
             }
         }
+
+        rhoPMFluid[i].correctBoundaryConditions();
+        CpPMFluid[i].correctBoundaryConditions();
+        kappaPMFluid[i].correctBoundaryConditions();
+        hsPMFluid[i].correctBoundaryConditions();
     }
 
 //------------------- SE4Foam -> Effective thermal properties ------------------//
@@ -518,7 +546,8 @@
                     IOobject::AUTO_WRITE
                 ),
                 fluidRegions[i],
-                dimensionedScalar("kappaEff", dimThermalConductivity, SMALL)
+                dimensionedScalar("kappaEff", dimThermalConductivity, SMALL),
+                "zeroGradient"
             )
         );
 

@@ -28,9 +28,9 @@ startTime       0;
 
 stopAt          endTime;
 
-endTime         10000;
+endTime         100000;
 
-deltaT          0.1;
+deltaT          1;
 
 writeControl    timeStep;
 
@@ -260,4 +260,5 @@ functions
         #};
     }
 );
+
 // ************************************************************************* //

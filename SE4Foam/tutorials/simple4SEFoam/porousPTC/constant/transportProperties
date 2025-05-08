@@ -21,6 +21,7 @@ Pr              Pr [0 0 0 0 0 0 0]		10.87;
 
 //fluidConstProp    constProp    coeffs    166.0    1056    0.1353    1575.0    3.28e-3; //T = 300K nu = 3.1e-6
 fluidConstProp    constProp    coeffs    166.0    975.7    0.1242    1851.0    7.3e-4; //T = 400K nu = 7.48e-7, alpha = 6.88e-8, Pr = 10.87
+//fluidConstProp    constProp    coeffs    166.0    890    0.1095    2120.0    2.9e-4; //T = 500K nu = 3.25e-7, alpha = 5.8e-8, Pr = 5.61
 /*
 //285 < T < 693 K in liquid phase
 fluidFuncTProp

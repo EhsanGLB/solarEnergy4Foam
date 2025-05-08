@@ -70,7 +70,7 @@ solvers
 
 SIMPLE
 {
-    nNonOrthogonalCorrectors 4;
+    nNonOrthogonalCorrectors 0;
 
     residualControl
     {

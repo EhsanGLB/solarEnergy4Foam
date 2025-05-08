@@ -11,4 +11,6 @@
     rhoEff = porosity*rho + (1-porosity)*rhoPM;
     CpEff = (porosity*rho*Cp + (1-porosity)*rhoPM*CpPM)/rhoEff;
     kappaEff = porosity*(kappat + kappa) + (1-porosity)*kappaPM;
-
+    rhoEff.correctBoundaryConditions();
+    CpEff.correctBoundaryConditions();
+    kappaEff.correctBoundaryConditions();

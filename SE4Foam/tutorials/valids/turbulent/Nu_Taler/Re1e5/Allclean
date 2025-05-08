@@ -9,3 +9,4 @@ rm -f constant/polyMesh/blockMeshDict
 rm -f postProcess.txt
 rm -f localPostProcess.txt
 rm -r dynamicCode
+rm -f Py*

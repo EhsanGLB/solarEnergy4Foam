@@ -12,11 +12,9 @@ set -x
 # download and install the coolProp in WM_PROJECT_USER_DIR of foam#
 #git clone --recursive https://github.com/coolprop/coolprop coolProp/CoolProp
 cp -r coolProp $WM_PROJECT_USER_DIR/src
-
-# activate permission
 find -type f -exec chmod 777 {} \;
-
 $WM_PROJECT_USER_DIR/src/coolProp/Allwmake
+
 
 # install the SE4Foam in WM_PROJECT_USER_DIR of foam#
 ./SE4Foam/Allwmake

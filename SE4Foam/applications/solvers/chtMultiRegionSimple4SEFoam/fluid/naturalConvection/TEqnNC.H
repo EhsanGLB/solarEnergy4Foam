@@ -10,6 +10,7 @@
         rad.Ru()
       - fvm::Sp(4.0*rad.Rp()*pow(T_,3), T)
       - rad.Rp()*pow(T_,3)*(T_ - 4.0*T)
+      + hsPM
     );
 
     TEqn.relax();
